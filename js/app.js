@@ -16,9 +16,16 @@
   const COLORS = { paper: '#E4DED5', ink: '#171513', rose: '#DDA39B', sage: '#ACB797' };
   const motion = !!G && !reduce;
 
+  /* Always open at the top. The browser's own scroll memory is switched off in the
+     <head> (before ScrollTrigger loads, because ScrollTrigger puts back whatever
+     setting it found when it loaded), and again here as a fallback. */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
-  if (G) { G.registerPlugin(ST); ST.config({ ignoreMobileResize: true }); }
+  if (G) {
+    G.registerPlugin(ST);
+    ST.config({ ignoreMobileResize: true });
+    if (ST.clearScrollMemory) ST.clearScrollMemory('manual');
+  }
 
   /* ---------------- smooth scroll ---------------- */
   let lenis = null;
@@ -32,6 +39,12 @@
     if (lenis) { if (on) lenis.stop(); else lenis.start(); }
     document.body.style.overflow = on ? 'hidden' : '';
   };
+  const toTop = () => {
+    window.scrollTo(0, 0);
+    if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+  };
+  // Back/forward cache brings the page back exactly as it was left: start at the top again.
+  addEventListener('pageshow', (e) => { if (e.persisted) { toTop(); if (ST) ST.update(); } });
   const scrollToTarget = (t) => {
     if (lenis) { lenis.scrollTo(t, { duration: 1.6 }); return; }
     if (typeof t === 'number') window.scrollTo({ top: t, behavior: reduce ? 'auto' : 'smooth' });
@@ -342,11 +355,14 @@
     if (shown >= 1 || now - t0 > 8000) { finishPre(); return; }
     requestAnimationFrame(preTick);
   }
+  // If the page finishes loading while the preloader is still up, make sure it is at the top.
+  addEventListener('load', () => { if (!preDone) toTop(); });
   function finishPre() {
     preDone = true;
     num.textContent = '100';
     clearInterval(preCycle);
     pre.classList.add('is-fast');
+    toTop();
     lock(false);
     if (motion) {
       G.timeline({ onComplete: () => { pre.remove(); ST.refresh(); } })
