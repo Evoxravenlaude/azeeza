@@ -207,7 +207,7 @@
   const hero = $('.hero'), heroPin = $('.hero__pin'), slot = $('.hero__slot');
   const topName = $('.hero__name--top'), botName = $('.hero__name--bot');
   const parens = $$('.hero__paren'), sides = $$('.hero__side'), bar = $('.hero__bar'), hint = $('.hero__hint');
-  const HERO_SRC = ['img/p22.jpg', 'img/p21.jpg', 'img/p17.jpg', 'img/p24.jpg', 'img/p06.jpg', 'img/p10.jpg'];
+  const HERO_SRC = ['img/a1.jpg', 'img/a2.jpg', 'img/a3.jpg', 'img/a4.jpg'];
   const heroState = { p: 0, intro: motion ? 0 : 1 };
   let slotR = { x: 0, y: 0, w: 1, h: 1 }, pinR = { w: innerWidth, h: innerHeight }, curRect = { x: 0, y: 0, w: 0, h: 0 };
   let heroGL = null, heroMedia = null, heroImgEl = null, heroIdx = 0, lensOn = false;
@@ -324,7 +324,7 @@
   });
   if (motion) G.set('.hero__name .ch', { yPercent: 110 });
   lock(true);
-  const toLoad = HERO_SRC.concat(['img/p01.jpg', 'img/s/p21.jpg', 'img/s/p13.jpg', 'img/s/p11.jpg']);
+  const toLoad = HERO_SRC.concat(['img/s/a2.jpg', 'img/s/a3.jpg', 'img/s/a4.jpg']);
   let loaded = 0;
   toLoad.forEach((src) => { const im = new Image(); im.onload = im.onerror = () => { loaded++; }; im.src = src; });
   const preImg = $('.pre__img');
